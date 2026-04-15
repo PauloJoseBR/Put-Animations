@@ -31,8 +31,7 @@ class FiltersNotifier extends Notifier<Map<Filter, bool>> {
   }
 }
 
-final filtersProvider =
-    NotifierProvider<FiltersNotifier, Map<Filter, bool>>(
+final filtersProvider = NotifierProvider<FiltersNotifier, Map<Filter, bool>>(
   FiltersNotifier.new,
 );
 
