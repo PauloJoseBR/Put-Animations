@@ -45,13 +45,31 @@ class _CategoriesScreenState extends State<CategoriesScreen>
         .toList();
 
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (ctx) => MealsScreen(
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 350),
+        reverseTransitionDuration: const Duration(milliseconds: 300),
+        pageBuilder: (ctx, animation, secondaryAnimation) => MealsScreen(
           title: category.title,
           meals: filteredMeals,
         ),
+        transitionsBuilder: (ctx, animation, secondaryAnimation, child) {
+          final curved = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+          );
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1, 0),
+              end: Offset.zero,
+            ).animate(curved),
+            child: FadeTransition(
+              opacity: Tween<double>(begin: 0.5, end: 1).animate(curved),
+              child: child,
+            ),
+          );
+        },
       ),
-    ); // Navigator.push(context, route)
+    );
   }
 
   @override

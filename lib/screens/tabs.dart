@@ -37,8 +37,27 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
     Navigator.of(context).pop();
     if (identifier == 'filters') {
       await Navigator.of(context).push<Map<Filter, bool>>(
-        MaterialPageRoute(
-          builder: (ctx) => const FiltersScreen(),
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 400),
+          reverseTransitionDuration: const Duration(milliseconds: 300),
+          pageBuilder: (ctx, animation, secondaryAnimation) =>
+              const FiltersScreen(),
+          transitionsBuilder: (ctx, animation, secondaryAnimation, child) {
+            final curved = CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutCubic,
+            );
+            return FadeTransition(
+              opacity: Tween<double>(begin: 0, end: 1).animate(curved),
+              child: SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(0, 0.15),
+                  end: Offset.zero,
+                ).animate(curved),
+                child: child,
+              ),
+            );
+          },
         ),
       );
     }
@@ -68,7 +87,19 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
       drawer: MainDrawer(
         onSelectScreen: _setScreen,
       ),
-      body: activePage,
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        transitionBuilder: (child, animation) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+        child: SizedBox(
+          key: ValueKey(_selectedPageIndex),
+          child: activePage,
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: _selectPage,
         currentIndex: _selectedPageIndex,
